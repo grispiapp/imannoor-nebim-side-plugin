@@ -1,0 +1,36 @@
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+import { JwtToken } from "@/types/grispi.type";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function parseJwt(token: string) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload) as JwtToken;
+}
+
+export function convertPhoneNumber(input: string) {
+  let digits = input.replace(/\D/g, ""); // Remove all non-digit characters
+  let match = digits.match(/^(\d{1,4})?(\d{10})$/); // Capture area code (optional) and last 10 digits
+
+  if (!match) return null; // Return null if input is invalid
+
+  let areaCode = match[1] && match[1] !== "0" ? match[1] : "90"; // Use provided area code or default to '90'
+  let number = match[2];
+
+  return `${areaCode}${number}`;
+}
