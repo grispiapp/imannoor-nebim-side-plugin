@@ -4,8 +4,8 @@
 
 ```json
 {
-  "title": "KVKK/Pazarlama İzinleri",
-  "src": "https://grispi.app/myor-permits-side-plugin/build/",
+  "title": "Kargo Sorgulama (Nebim)",
+  "src": "https://grispi.app/imannoor-nebim-side-plugin/build/",
   "uiDefinition": {
     "height": 900
   },

@@ -46,8 +46,11 @@ export const OrdersScreen = observer(() => {
     }
 
     setIsLoading(true);
+
     try {
-      const response = await searchOrderByPhone(formattedPhone);
+      const response = await searchOrderByPhone(formattedPhone, {
+        token: bundle?.context.token,
+      });
 
       setOrderData(response);
     } catch (error) {
