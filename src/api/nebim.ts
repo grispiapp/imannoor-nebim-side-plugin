@@ -12,7 +12,10 @@ export type SearchOrderByPhonePayload = {
   phone: string;
 };
 
-export type SearchOrderByPhoneResponse = OrderListItem[];
+export type SearchOrderByPhoneResponse = {
+  statusCode: number;
+  data: OrderListItem[];
+};
 
 export const searchOrderByPhone = async (
   phoneNumber: string,

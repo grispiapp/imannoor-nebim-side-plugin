@@ -24,13 +24,24 @@ export function parseJwt(token: string) {
 }
 
 export function convertPhoneNumber(input: string) {
-  let digits = input.replace(/\D/g, ""); // Remove all non-digit characters
-  let match = digits.match(/^(\d{1,4})?(\d{10})$/); // Capture area code (optional) and last 10 digits
+  const digits = input.replace(/\D/g, "");
+  if (digits.length < 10) return null;
+  return digits.slice(-10);
+}
 
-  if (!match) return null; // Return null if input is invalid
+export function formatDate(date: number): string | null {
+  if (!date) return null;
+  return new Date(date).toLocaleDateString();
+}
 
-  let areaCode = match[1] && match[1] !== "0" ? match[1] : "90"; // Use provided area code or default to '90'
-  let number = match[2];
+export function parseDotNetDateString(dateString: string): number | null {
+  const match = /\/Date\((\d+)\)\//.exec(dateString);
+  if (!match) return null;
+  return parseInt(match[1], 10);
+}
 
-  return `${areaCode}${number}`;
+export function formatDotNetDateString(dateString: string): string | null {
+  const date = parseDotNetDateString(dateString);
+  if (!date) return null;
+  return formatDate(date);
 }

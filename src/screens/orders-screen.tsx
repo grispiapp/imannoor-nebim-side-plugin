@@ -14,7 +14,7 @@ import {
   ScreenTitle,
 } from "@/components/ui/screen";
 import { useGrispi } from "@/contexts/grispi-context";
-import { convertPhoneNumber } from "@/lib/utils";
+import { convertPhoneNumber, parseDotNetDateString } from "@/lib/utils";
 import { OrderItem } from "@/components/order-item";
 import { searchOrderByPhone, SearchOrderByPhoneResponse } from "@/api/nebim";
 
@@ -52,6 +52,10 @@ export const OrdersScreen = observer(() => {
         token: bundle?.context.token,
       });
 
+      response.data = response.data.sort((a, b) => {
+        return Number(parseDotNetDateString(b.OrderDate)) - Number(parseDotNetDateString(a.OrderDate));
+      });
+
       setOrderData(response);
     } catch (error) {
       console.error("Sipariş aranamadı:", error);
@@ -70,45 +74,45 @@ export const OrdersScreen = observer(() => {
         <ScreenTitle>Nebim Kargo Durumları</ScreenTitle>
       </ScreenHeader>
       <ScreenContent>
-        <LoadingWrapper loading={isLoading}>
-          <div className="flex flex-col gap-3 p-6">
-            <div className="flex flex-col gap-4">
-              <div>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    fetchOrders(phoneNumber);
-                  }}
-                  className="flex items-center"
-                >
-                  <Input
-                    type="tel"
-                    autoFocus
-                    placeholder="Telefon Numarası"
-                    value={phoneNumber}
-                    className="bg-white rounded-e-none"
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                  />
-                  <Button type="submit" className="rounded-s-none">Ara</Button>
-                </form>
-                {orderData && orderData.length === 0 && (
-                  <div className="flex gap-2 items-center px-3 py-2 pt-4 -mt-2 text-xs font-medium rounded-b-lg text-destructive bg-destructive/10">
-                    <ExclamationTriangleIcon className="size-3" />
-                    <span>Bu numaraya ait bir kayıt yok.</span>
-                  </div>
-                )}
-              </div>
+        <div className="flex flex-col gap-3 p-6">
+          <div className="flex flex-col gap-4">
+            <div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  fetchOrders(phoneNumber);
+                }}
+                className="flex items-center"
+              >
+                <Input
+                  type="tel"
+                  autoFocus
+                  placeholder="Telefon Numarası"
+                  value={phoneNumber}
+                  className="bg-white rounded-e-none"
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+                <Button type="submit" className="rounded-s-none" disabled={isLoading}>Ara</Button>
+              </form>
+              {!isLoading && orderData && orderData.data.length === 0 && (
+                <div className="flex gap-2 items-center px-3 py-2 pt-4 -mt-2 text-xs font-medium rounded-b-lg text-destructive bg-destructive/10">
+                  <ExclamationTriangleIcon className="size-3" />
+                  <span>Bu numaraya ait bir kayıt yok.</span>
+                </div>
+              )}
+            </div>
 
+            <LoadingWrapper loading={isLoading}>
               {orderData && (
                 <div className="flex flex-col divide-y *:py-2 *:text-sm space-y-2">
-                  {orderData.map((order) => (
+                  {orderData.data.map((order) => (
                     <OrderItem key={order.OrderNumber} order={order} />
                   ))}
                 </div>
               )}
-            </div>
+            </LoadingWrapper>
           </div>
-        </LoadingWrapper>
+        </div>
       </ScreenContent>
     </Screen>
   );
