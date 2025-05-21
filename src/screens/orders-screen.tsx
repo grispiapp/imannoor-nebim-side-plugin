@@ -26,7 +26,7 @@ export const OrdersScreen = observer(() => {
   >(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const requesterPhoneNumber = bundle?.context.requester.phone;
+  const requesterPhoneNumber = bundle?.context?.requester?.phone;
 
   useEffect(() => {
     if (requesterPhoneNumber) {
