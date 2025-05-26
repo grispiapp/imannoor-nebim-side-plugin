@@ -43,3 +43,30 @@ export const searchOrderByPhone = async (
 
   return response.json();
 };
+
+export const searchOrderByOrderNumber = async (
+  orderNumber: string,
+  options: {
+    token: string;
+  }
+): Promise<SearchOrderByPhoneResponse> => {
+  const response = await fetch(
+    `${NEBIM_API_URL}/nebim/search-orders-by-order`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${options.token}`,
+      },
+      body: JSON.stringify({
+        order_number: orderNumber,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Sipariş aranamadı");
+  }
+
+  return response.json();
+};

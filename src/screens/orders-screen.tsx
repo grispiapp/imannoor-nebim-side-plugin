@@ -2,7 +2,6 @@ import { LoadingScreen } from "./loading-screen";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
 import { LoadingWrapper } from "@/components/loading-wrapper";
 import { Button } from "@/components/ui/button";
@@ -14,13 +13,13 @@ import {
   ScreenTitle,
 } from "@/components/ui/screen";
 import { useGrispi } from "@/contexts/grispi-context";
-import { convertPhoneNumber, parseDotNetDateString } from "@/lib/utils";
+import { fetchOrdersByQuery } from "@/lib/utils";
 import { OrderItem } from "@/components/order-item";
-import { searchOrderByPhone, SearchOrderByPhoneResponse } from "@/api/nebim";
+import { SearchOrderByPhoneResponse } from "@/api/nebim";
 
 export const OrdersScreen = observer(() => {
   const { loading, bundle } = useGrispi();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [orderData, setOrderData] = useState<
     SearchOrderByPhoneResponse | null
   >(null);
@@ -30,33 +29,21 @@ export const OrdersScreen = observer(() => {
 
   useEffect(() => {
     if (requesterPhoneNumber) {
-      setPhoneNumber(requesterPhoneNumber);
+      setSearchQuery(requesterPhoneNumber);
       fetchOrders(requesterPhoneNumber);
     }
   }, [requesterPhoneNumber]);
 
-  const fetchOrders = async (phone: string) => {
+  const fetchOrders = async (query: string) => {
     if (!bundle?.context.token) return;
-
-    const formattedPhone = convertPhoneNumber(phone);
-
-    if (!formattedPhone) {
-      toast.error("Geçersiz telefon numarası");
-      return;
-    }
 
     setIsLoading(true);
 
     try {
-      const response = await searchOrderByPhone(formattedPhone, {
-        token: bundle?.context.token,
-      });
-
-      response.data = response.data.sort((a, b) => {
-        return Number(parseDotNetDateString(b.OrderDate)) - Number(parseDotNetDateString(a.OrderDate));
-      });
-
-      setOrderData(response);
+      const response = await fetchOrdersByQuery(query, bundle.context.token);
+      if (response) {
+        setOrderData(response);
+      }
     } catch (error) {
       console.error("Sipariş aranamadı:", error);
     } finally {
@@ -80,17 +67,17 @@ export const OrdersScreen = observer(() => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  fetchOrders(phoneNumber);
+                  fetchOrders(searchQuery);
                 }}
                 className="flex items-center"
               >
                 <Input
                   type="tel"
                   autoFocus
-                  placeholder="Telefon Numarası"
-                  value={phoneNumber}
+                  placeholder="Telefon Numarası veya Sipariş No (TS...)"
+                  value={searchQuery}
                   className="bg-white rounded-e-none"
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <Button type="submit" className="rounded-s-none" disabled={isLoading}>Ara</Button>
               </form>

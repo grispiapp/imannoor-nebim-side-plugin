@@ -1,6 +1,12 @@
 import { type ClassValue, clsx } from "clsx";
+import toast from "react-hot-toast";
 import { twMerge } from "tailwind-merge";
 
+import {
+  SearchOrderByPhoneResponse,
+  searchOrderByOrderNumber,
+  searchOrderByPhone,
+} from "@/api/nebim";
 import { JwtToken } from "@/types/grispi.type";
 
 export function cn(...inputs: ClassValue[]) {
@@ -44,4 +50,32 @@ export function formatDotNetDateString(dateString: string): string | null {
   const date = parseDotNetDateString(dateString);
   if (!date) return null;
   return formatDate(date);
+}
+
+export async function fetchOrdersByQuery(
+  query: string,
+  token: string
+): Promise<SearchOrderByPhoneResponse | null> {
+  if (!token) return null;
+
+  let response;
+  if (query.trim().toUpperCase().startsWith("TS")) {
+    response = await searchOrderByOrderNumber(query.trim(), { token });
+  } else {
+    const formattedPhone = convertPhoneNumber(query);
+    if (!formattedPhone) {
+      toast.error("Geçersiz telefon numarası");
+      return null;
+    }
+    response = await searchOrderByPhone(formattedPhone, { token });
+  }
+
+  response.data = response.data.sort((a: any, b: any) => {
+    return (
+      Number(parseDotNetDateString(b.OrderDate)) -
+      Number(parseDotNetDateString(a.OrderDate))
+    );
+  });
+
+  return response;
 }
