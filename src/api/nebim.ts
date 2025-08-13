@@ -70,3 +70,29 @@ export const searchOrderByOrderNumber = async (
 
   return response.json();
 };
+
+export const cancelOrder = async (
+  orderNumber: string,
+  options: {
+    token: string;
+  }
+): Promise<SearchOrderByPhoneResponse> => {
+  const response = await fetch(`${NEBIM_API_URL}/nebim/cancel-order`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${options.token}`,
+    },
+    body: JSON.stringify({
+      document_number: orderNumber,
+    }),
+  });
+
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json.data.error);
+  }
+
+  return json;
+};
