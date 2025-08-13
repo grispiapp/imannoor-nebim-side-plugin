@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/imannoor-nebim-side-plugin/build/static/css/main.42852809.css",
-    "main.js": "/imannoor-nebim-side-plugin/build/static/js/main.b6488327.js",
+    "main.css": "/imannoor-nebim-side-plugin/build/static/css/main.cdd5f03d.css",
+    "main.js": "/imannoor-nebim-side-plugin/build/static/js/main.ecfb5757.js",
     "index.html": "/imannoor-nebim-side-plugin/build/index.html",
-    "main.42852809.css.map": "/imannoor-nebim-side-plugin/build/static/css/main.42852809.css.map",
-    "main.b6488327.js.map": "/imannoor-nebim-side-plugin/build/static/js/main.b6488327.js.map"
+    "main.cdd5f03d.css.map": "/imannoor-nebim-side-plugin/build/static/css/main.cdd5f03d.css.map",
+    "main.ecfb5757.js.map": "/imannoor-nebim-side-plugin/build/static/js/main.ecfb5757.js.map"
   },
   "entrypoints": [
-    "static/css/main.42852809.css",
-    "static/js/main.b6488327.js"
+    "static/css/main.cdd5f03d.css",
+    "static/js/main.ecfb5757.js"
   ]
 }
